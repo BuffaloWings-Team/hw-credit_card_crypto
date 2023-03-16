@@ -20,27 +20,30 @@ module DoubleTranspositionCipher
     row_chunk
   end
 
-  def self.colchunk(chunks, matrix_size, row_chunk, rows)
-    col_chunk = Array.new(matrix_size) { Array.new(matrix_size) }
-    (0..chunks[0].length - 1).each do |i|
-      row_chunk[i] << '*' until row_chunk[i].length == chunks[0].length
-      row_chunk[i].each_with_index do |_element, index|
-        col_chunk[i][index] = row_chunk[i][rows[index]]
-      end
+  def self.colchunk2(row_chunk, ind, chunks, rows, col_chunk)
+    row_chunk[ind] << '*' until row_chunk[ind].length == chunks[0].length
+    row_chunk[ind].each_with_index do |_element, index|
+      col_chunk[ind][index] = row_chunk[ind][rows[index]]
     end
     col_chunk
   end
 
-=begin
-  def self.sortchunk(chunks, row_chunk, rows, col_chunk)
+  def self.colchunk(chunks, matrix_size, row_chunk, rows)
+    col_chunk = Array.new(matrix_size) { Array.new(matrix_size) }
     (0..chunks[0].length - 1).each do |i|
-      row_chunk[i] << '*' until row_chunk[i].length == chunks[0].length
-      row_chunk[i].each_with_index do |_element, index|
-        col_chunk[i][index] = row_chunk[i][rows[index]]
-      end
+      col_chunk = colchunk2(row_chunk, i, chunks, rows, col_chunk)
     end
+    col_chunk
   end
-=end
+
+  #   def self.sortchunk(chunks, row_chunk, rows, col_chunk)
+  #     (0..chunks[0].length - 1).each do |i|
+  #       row_chunk[i] << '*' until row_chunk[i].length == chunks[0].length
+  #       row_chunk[i].each_with_index do |_element, index|
+  #         col_chunk[i][index] = row_chunk[i][rows[index]]
+  #       end
+  #     end
+  #   end
 
   def self.encrypt(document, key)
     # TODO: FILL THIS IN!
@@ -59,7 +62,7 @@ module DoubleTranspositionCipher
     col_chunk = colchunk(chunks, matrix_size, row_chunk, rows)
 
     # 5. return joined cyphertext
-    col_chunk.join('')
+    col_chunk.to_a.join('')
   end
 
   def self.create_matrix(text)
