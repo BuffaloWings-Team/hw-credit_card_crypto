@@ -1,38 +1,65 @@
+# frozen_string_literal: true
+
+# Encrypts and Decrypts document with a key using a transposition cipher
 module DoubleTranspositionCipher
-  def self.encrypt(document, key)
-    #TODO: FILL THIS IN!
-    ## Suggested steps for double transposition cipher
-    # 1. find number of rows/cols such that matrix is almost square
-    text = document.to_s.split('')
-    size =  text.size 
-    #key_int = key.to_s.bytes.reduce(&:*) Do we need this line? 
-    matrix_size = Math.sqrt(size).ceil
-    
-    # 2. break plaintext into evenly sized blocks
-    chunks = text.each_slice(matrix_size).to_a
-    
-    # 3. sort rows in predictibly random way using key as seed
-    rows = (0..chunks.size-1).to_a.shuffle(random: Random.new(key.to_i))
+  def self.matrix_size(text)
+    text = text.to_s.split('')
+    Math.sqrt(text.size).ceil
+  end
+
+  def self.plaintext(text, size)
+    text = text.to_s.split('')
+    text.each_slice(size).to_a
+  end
+
+  def self.rowchunk(chunks, rows)
     row_chunk = []
-    chunks.each_with_index do |element, index|
+    chunks.each_with_index do |_element, index|
       row_chunk << chunks[rows[index]]
-    end 
-        
-    # 4. sort columns of each row in predictibly random way
-    columns = (0..chunks[0].length-1).to_a.shuffle(random: Random.new(key.to_i))
-    col_chunk = Array.new(matrix_size){Array.new(matrix_size)}
-    for i in 0..chunks[0].length-1 do
-       until row_chunk[i].length == chunks[0].length
-         row_chunk[i] << "*" 
-       end 
-       row_chunk[i].each_with_index do |element,index|
-       col_chunk[i][index] = row_chunk[i][rows[index]]
+    end
+    row_chunk
+  end
+
+  def self.colchunk(chunks, matrix_size, row_chunk, rows)
+    col_chunk = Array.new(matrix_size) { Array.new(matrix_size) }
+    (0..chunks[0].length - 1).each do |i|
+      row_chunk[i] << '*' until row_chunk[i].length == chunks[0].length
+      row_chunk[i].each_with_index do |_element, index|
+        col_chunk[i][index] = row_chunk[i][rows[index]]
       end
     end
+    col_chunk
+  end
+
+=begin
+  def self.sortchunk(chunks, row_chunk, rows, col_chunk)
+    (0..chunks[0].length - 1).each do |i|
+      row_chunk[i] << '*' until row_chunk[i].length == chunks[0].length
+      row_chunk[i].each_with_index do |_element, index|
+        col_chunk[i][index] = row_chunk[i][rows[index]]
+      end
+    end
+  end
+=end
+
+  def self.encrypt(document, key)
+    # TODO: FILL THIS IN!
+    ## Suggested steps for double transposition cipher
+    # 1. find number of rows/cols such that matrix is almost square
+    matrix_size = matrix_size(document)
+
+    # 2. break plaintext into evenly sized blocks
+    chunks = plaintext(document, matrix_size)
+
+    # 3. sort rows in predictibly random way using key as seed
+    rows = (0..chunks.size - 1).to_a.shuffle(random: Random.new(key.to_i))
+    row_chunk = rowchunk(chunks, rows)
+
+    # 4. sort columns of each row in predictibly random way
+    col_chunk = colchunk(chunks, matrix_size, row_chunk, rows)
 
     # 5. return joined cyphertext
-   #col_chunk.join.tr('*','')
-   col_chunk.join('')
+    col_chunk.join('')
   end
 
   def self.create_matrix(text)
@@ -45,7 +72,7 @@ module DoubleTranspositionCipher
     transformed_order = (0...matrix.length).to_a.shuffle!(random: random)
     matrix.sort_by.with_index { |_, i| transformed_order[i] }
   end
-  
+
   def self.decrypt(ciphertext, key)
     # TODO: FILL THIS IN!
     _row_col_size, matrix = create_matrix(ciphertext)
@@ -55,6 +82,4 @@ module DoubleTranspositionCipher
     end
     sort_columns.map(&:join).join('').delete('*')
   end
-
-
 end
