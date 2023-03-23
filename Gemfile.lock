@@ -1,20 +1,30 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    base64 (0.1.1)
+    benchmark (0.2.1)
     bundler-audit (0.9.1)
       bundler (>= 1.2.0, < 3)
       thor (~> 1.0)
+    ffi (1.15.5)
     json (2.6.3)
     minitest (5.18.0)
+    rbnacl (7.1.1)
+      ffi
     thor (1.2.1)
+    yaml (0.2.1)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  base64
+  benchmark
   bundler-audit
   json
   minitest
+  rbnacl
+  yaml
 
 BUNDLED WITH
    2.3.7
