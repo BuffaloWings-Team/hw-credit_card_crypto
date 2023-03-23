@@ -24,6 +24,7 @@ DEPENDENCIES
   json
   minitest
   rbnacl
+  thor
   yaml
 
 BUNDLED WITH
