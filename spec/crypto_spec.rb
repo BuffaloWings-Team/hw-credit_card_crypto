@@ -3,12 +3,14 @@
 require_relative '../credit_card'
 require_relative '../substitution_cipher'
 require_relative '../double_trans_cipher'
+require_relative '../sk_cipher'
 require 'minitest/autorun'
 
 cipher = {
   Ceaser: SubstitutionCipher::Caesar,
   Permutation: SubstitutionCipher::Permutation,
-  DoubleTransposition: DoubleTranspositionCipher
+  DoubleTransposition: DoubleTranspositionCipher,
+  Modern_Symmetric: ModernSymmetricCipher,
 }
 
 describe 'Test card info encryption' do
@@ -32,5 +34,12 @@ describe 'Test card info encryption' do
         _(dec).must_equal @cc.to_s
       end
     end
+  end
+end
+describe 'generate ModernSymmetricCipher key' do
+  it 'should return a valid key' do
+    key = ModernSymmetricCipher.generate_new_key
+    _(key).wont_be_nil
+    _(key.length).must_equal(32)
   end
 end
