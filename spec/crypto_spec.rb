@@ -10,7 +10,7 @@ cipher = {
   Ceaser: SubstitutionCipher::Caesar,
   Permutation: SubstitutionCipher::Permutation,
   DoubleTransposition: DoubleTranspositionCipher,
-  Modern_Symmetric: ModernSymmetricCipher,
+  Modern_Symmetric: ModernSymmetricCipher
 }
 
 describe 'Test card info encryption' do
